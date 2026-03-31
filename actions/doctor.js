@@ -16,7 +16,7 @@ export async function setAvailabilitySlots(formData) {
 
   try {
     // Get the doctor
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         clerkUserId: userId,
         role: "DOCTOR",
@@ -94,7 +94,7 @@ export async function getDoctorAvailability() {
   }
 
   try {
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         clerkUserId: userId,
         role: "DOCTOR",
@@ -132,7 +132,7 @@ export async function getDoctorAppointments() {
   }
 
   try {
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         clerkUserId: userId,
         role: "DOCTOR",

@@ -1,7 +1,7 @@
 
 import { redirect } from "next/navigation";
 import { getDoctorsBySpecialty } from "@/actions/doctors-listing";
-import { AppointmentCard } from "@/components/appointment-card";
+import { DoctorCard } from "@/components/doctor-card";
 import { PageHeader } from "@/components/page-header";
 
 export default async function DoctorSpecialtyPage({ params }) {
@@ -30,7 +30,7 @@ export default async function DoctorSpecialtyPage({ params }) {
       {doctors && doctors.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {doctors.map((doctor) => (
-            <AppointmentCard key={doctor.id} doctor={doctor} />
+            <DoctorCard key={doctor.id} doctor={doctor} />
           ))}
         </div>
       ) : (

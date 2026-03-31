@@ -51,7 +51,7 @@ export async function bookAppointment(formData) {
     }
 
     // Check if the doctor exists and is verified
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         id: doctorId,
         role: "DOCTOR",
@@ -286,7 +286,7 @@ export async function getDoctorById(doctorId) {
 export async function getAvailableTimeSlots(doctorId) {
   try {
     // Validate doctor existence and verification
-    const doctor = await db.user.findUnique({
+    const doctor = await db.user.findFirst({
       where: {
         id: doctorId,
         role: "DOCTOR",
