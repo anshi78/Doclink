@@ -16,16 +16,21 @@ export async function setAvailabilitySlots(formData) {
 
   try {
     // Get the doctor
-    const doctor = await db.user.findFirst({
+    const user = await db.user.findUnique({
       where: {
         clerkUserId: userId,
-        role: "DOCTOR",
       },
     });
 
-    if (!doctor) {
-      throw new Error("Doctor not found");
+    if (!user) {
+      throw new Error("User not found in database");
     }
+
+    if (user.role !== "DOCTOR") {
+      throw new Error(`User is not a doctor. Current role: ${user.role}`);
+    }
+
+    const doctor = user;
 
     // Get form data
     const startTime = formData.get("startTime");
@@ -94,16 +99,21 @@ export async function getDoctorAvailability() {
   }
 
   try {
-    const doctor = await db.user.findFirst({
+    const user = await db.user.findUnique({
       where: {
         clerkUserId: userId,
-        role: "DOCTOR",
       },
     });
 
-    if (!doctor) {
-      throw new Error("Doctor not found");
+    if (!user) {
+      throw new Error("User not found in database");
     }
+
+    if (user.role !== "DOCTOR") {
+      throw new Error(`User is not a doctor. Current role: ${user.role}`);
+    }
+
+    const doctor = user;
 
     const availabilitySlots = await db.availability.findMany({
       where: {
@@ -132,20 +142,24 @@ export async function getDoctorAppointments() {
   }
 
   try {
-    const doctor = await db.user.findFirst({
+    // First, get the user to verify they exist
+    const user = await db.user.findUnique({
       where: {
         clerkUserId: userId,
-        role: "DOCTOR",
       },
     });
 
-    if (!doctor) {
-      throw new Error("Doctor not found");
+    if (!user) {
+      throw new Error("User not found in database");
+    }
+
+    if (user.role !== "DOCTOR") {
+      throw new Error(`User is not a doctor. Current role: ${user.role}`);
     }
 
     const appointments = await db.appointment.findMany({
       where: {
-        doctorId: doctor.id,
+        doctorId: user.id,
         status: {
           in: ["SCHEDULED"],
         },
@@ -160,7 +174,7 @@ export async function getDoctorAppointments() {
 
     return { appointments };
   } catch (error) {
-    throw new Error("Failed to fetch appointments " + error.message);
+    throw new Error("Failed to fetch appointments: " + error.message);
   }
 }
 

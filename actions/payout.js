@@ -19,16 +19,21 @@ export async function requestPayout(formData) {
   }
 
   try {
-    const doctor = await db.user.findFirst({
+    const user = await db.user.findUnique({
       where: {
         clerkUserId: userId,
-        role: "DOCTOR",
       },
     });
 
-    if (!doctor) {
-      throw new Error("Doctor not found");
+    if (!user) {
+      throw new Error("User not found in database");
     }
+
+    if (user.role !== "DOCTOR") {
+      throw new Error(`User is not a doctor. Current role: ${user.role}`);
+    }
+
+    const doctor = user;
 
     const paypalEmail = formData.get("paypalEmail");
 
@@ -97,16 +102,21 @@ export async function getDoctorPayouts() {
   }
 
   try {
-    const doctor = await db.user.findFirst({
+    const user = await db.user.findUnique({
       where: {
         clerkUserId: userId,
-        role: "DOCTOR",
       },
     });
 
-    if (!doctor) {
-      throw new Error("Doctor not found");
+    if (!user) {
+      throw new Error("User not found in database");
     }
+
+    if (user.role !== "DOCTOR") {
+      throw new Error(`User is not a doctor. Current role: ${user.role}`);
+    }
+
+    const doctor = user;
 
     const payouts = await db.payout.findMany({
       where: {
@@ -134,18 +144,21 @@ export async function getDoctorEarnings() {
   }
 
   try {
-    const doctor = await db.user.findFirst({
+    const user = await db.user.findUnique({
       where: {
         clerkUserId: userId,
-        role: "DOCTOR",
       },
     });
 
-    if (!doctor) {
-      throw new Error("Doctor not found");
+    if (!user) {
+      throw new Error("User not found in database");
     }
 
-    // Get all completed appointments for this doctor
+    if (user.role !== "DOCTOR") {
+      throw new Error(`User is not a doctor. Current role: ${user.role}`);
+    }
+
+    const doctor = user;
     const completedAppointments = await db.appointment.findMany({
       where: {
         doctorId: doctor.id,
